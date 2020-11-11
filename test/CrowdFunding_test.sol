@@ -58,5 +58,17 @@ contract CrowdFundingTests {
         Assert.equal(10, crowdFunding.getContributor(1).valueContributed, "Contributor1 has 10 funds");
         Assert.equal(15, crowdFunding.getCurrentFunding(), "Current funding is 15");
     }
+
+   function testDepositWhenGoalReached() public returns (bool) {
+        crowdFunding.deposit(185, crowdFunding.getContributor(1));
+        Assert.equal(200, crowdFunding.getCurrentFunding(), "Current funding is 200");
+        
+        crowdFunding.deposit(185, crowdFunding.getContributor(1));
+        Assert.equal(200, crowdFunding.getCurrentFunding(), "Current funding is 200");
+    }
     
+    function testWithdrawWhenGoalIsReached() public returns (bool) {
+        crowdFunding.withdraw(10, crowdFunding.getContributor(1));
+        Assert.equal(200, crowdFunding.getCurrentFunding(), "Current funding is 200");
+    }
 }

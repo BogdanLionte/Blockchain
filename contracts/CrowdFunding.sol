@@ -38,7 +38,11 @@ contract CrowdFunding {
     
     function deposit(uint sum, Person memory _contributor) public {
         uint contributorIndex;
-        
+
+	if (currentFunding >= fundingGoal) {
+	    return;
+	}       
+ 
         for(contributorIndex = 0; contributorIndex < contributors.length; contributorIndex++) {
             if (keccak256(bytes(contributors[contributorIndex].name)) == keccak256(bytes(_contributor.name))) {
                 break;
@@ -58,6 +62,11 @@ contract CrowdFunding {
     }
     
     function withdraw(uint sum, Person memory _contributor) public {
+
+	if (currentFunding >= fundingGoal) {
+	    return;
+	}
+
         for(uint contributorIndex = 0; contributorIndex < contributors.length; contributorIndex++) {
             if (keccak256(bytes(contributors[contributorIndex].name)) == keccak256(bytes(_contributor.name))) {
                 if (contributors[contributorIndex].valueContributed >= sum) {
