@@ -1,0 +1,68 @@
+pragma solidity >=0.4.22 <0.7.0;
+
+pragma experimental ABIEncoderV2;
+
+contract DistributeFunding {
+    
+    struct Actionary {
+        string name;
+        uint money;
+        uint percentage;
+    }
+    
+    uint public currentPercentage;
+    Actionary[] public actionaries;
+    bool distributed;
+    
+    constructor() public {
+        currentPercentage = 0;
+        distributed = false;
+    }
+    
+    function addActionary(string memory name, uint percentage) public {
+        if(getIndex(name) > 0 && percentage > 0 && percentage <= 100 && currentPercentage + percentage <= 100) {
+         actionaries.push(Actionary(name, 0, percentage));   
+        }
+    }
+    
+    function removeActionary(string memory name) public {
+        int index = getIndex(name);
+        if (index > 0) {
+            actionaries[uint(index)] = actionaries[actionaries.length - 1];
+            actionaries.pop();
+        }
+    }
+    
+    function getActionaries() public view returns (string [] memory , uint[] memory, uint[] memory) {
+        string[] memory names = new string[](actionaries.length);
+        uint [] memory moneys = new uint[](actionaries.length);
+        uint [] memory percentages = new uint[](actionaries.length);
+        
+        for(uint index = 0; index < actionaries.length; index++) {
+            names[index] = actionaries[index].name;
+            moneys[index] = actionaries[index].money;
+            percentages[index] = actionaries[index].percentage;
+        }
+        
+        return (names, moneys, percentages);
+    }
+    
+    function distribute(uint sum) public {
+        if(!distributed) {
+            for(uint index = 0; index < actionaries.length; index++) {
+                Actionary storage actionary = actionaries[index];
+                actionary.money = (sum / 100) * actionary.percentage;
+            }
+            distributed = true;
+        }
+    }
+    
+    function getIndex(string memory name) private view returns (int) {
+        for(uint index = 0; index < actionaries.length; index++) {
+            if (keccak256(bytes(actionaries[index].name)) == keccak256(bytes(name))) {
+              return int(index);  
+            }
+        }
+        return -1;
+    }
+}
