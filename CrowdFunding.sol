@@ -17,18 +17,17 @@ contract CrowdFunding {
     constructor(uint _fundingGoal) public payable {
         fundingGoal = _fundingGoal;
         currentAmount = address(this).balance;
-        sall = address(this).balance;
     }
     
-    function create(address _address, uint valueContributed) public {
+    function create(address _address, uint valueContributed) private {
         contributors.push(Person(_address, valueContributed, true));
     } 
     
-    function getContributor(uint index) public view returns (Person memory) {
+    function getContributor(uint index) private view returns (Person memory) {
         return contributors[index];
     }
     
-    function getContributors() public view returns (Person[] memory) {
+    function getContributors() private view returns (Person[] memory) {
         return contributors;
     }
     
@@ -49,7 +48,7 @@ contract CrowdFunding {
         if (contributorIndex < contributors.length) {
             contributors[contributorIndex].valueContributed = contributors[contributorIndex].valueContributed + msg.value / (10 ** 18);
         } else {
-            contributors.push(Person(msg.sender, msg.value, true));
+            contributors.push(Person(msg.sender, msg.value / (10 ** 18), true));
         }
         
         currentAmount = currentAmount + msg.value / (10 ** 18);
