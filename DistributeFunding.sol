@@ -13,11 +13,13 @@ contract DistributeFunding {
     Actionary[] actionaries;
     bool distributed;
     address owner;
+    uint initial_value;
     
     constructor() public payable{
         currentPercentage = 0;
         distributed = false;
         owner = msg.sender;
+        initial_value = (address(this).balance);
     }
     
     function addActionary(uint percentage) public {
@@ -52,11 +54,10 @@ contract DistributeFunding {
         if(!distributed && currentPercentage == 100 && msg.sender == owner) {
             for(uint index = 0; index < actionaries.length; index++) {
                 Actionary memory actionary = actionaries[index];
-                // uint money = (address(this).balance) / 100 * actionary.percentage;
-                actionary.addr.transfer(1);
-                // if(money <= address(this).balance) {
-                //     actionary.addr.transfer(money);
-                // }
+                uint money = initial_value / 100 * actionary.percentage;
+                if(money <= address(this).balance) {
+                    actionary.addr.transfer(money);
+                }
             }
             distributed = true;
         }
